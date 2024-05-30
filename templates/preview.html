@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reveal.js 簡報預覽</title>
+    <!-- 引入 Reveal.js 的 CSS 和 JavaScript -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.1.3/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.1.3/dist/reveal.css">
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- 插入使用者編輯的簡報內容 -->
+            {{ content|safe }}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.1.3/dist/reveal.js"></script>
+    <script>
+        // 初始化 Reveal.js 簡報
+        Reveal.initialize();
+    </script>
+</body>
+</html>
