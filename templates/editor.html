@@ -65,26 +65,25 @@
             viewportMargin: Infinity
         });
 
-        // 監聽複選框變化,並將選取的片段插入編輯器
-        var checkboxes = document.querySelectorAll('.snippets input[type="checkbox"]');
-        for (var i = 0; i < checkboxes.length; i++) {
-            checkboxes[i].addEventListener('change', function() {
-                if (this.checked) {
-                    var snippet = this.nextElementSibling.nextElementSibling.textContent;
-                    var cursorPos = editor.getCursor();
-                    var lineContent = editor.getLine(cursorPos.line);
-                    var openingTagIndex = lineContent.indexOf('<section>') + 9;
-                    var closingTagIndex = lineContent.indexOf('</section>');
-                    var insertionPoint = {
-                        line: cursorPos.line,
-                        ch: closingTagIndex
-                    };
+    // 監聽複選框變化,並將選取的片段插入編輯器
+    var checkboxes = document.querySelectorAll('.snippets input[type="checkbox"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+      checkboxes[i].addEventListener('change', function () {
+        if (this.checked) {
+          var snippet = this.nextElementSibling.nextElementSibling.textContent;
+          var cursorPos = editor.getCursor();
+          var lineContent = editor.getLine(cursorPos.line);
+          var closingTagIndex = lineContent.indexOf('</section>');
 
-                    // 在 </section> 前插入新的片段
-                    editor.replaceRange(snippet, insertionPoint);
-                }
-            });
+          // 在 </section> 前插入新的片段
+          var insertionPoint = {
+            line: cursorPos.line,
+            ch: closingTagIndex
+          };
+          editor.replaceRange(snippet, insertionPoint);
         }
+      });
+    }
 
         function beautifyCode() {
             var code = editor.getValue();
