@@ -73,13 +73,37 @@
           var snippet = this.nextElementSibling.nextElementSibling.textContent;
           var cursorPos = editor.getCursor();
           var lineContent = editor.getLine(cursorPos.line);
-          var closingTagIndex = lineContent.indexOf('</section>');
 
-          // 在 </section> 前插入新的片段
-          var insertionPoint = {
-            line: cursorPos.line,
-            ch: closingTagIndex
-          };
+          // 找到当前行中最近的 '</section>' 标签位置
+          var closingTagIndex = lineContent.lastIndexOf('</section>');
+          if (closingTagIndex === -1) { // 如果当前行没有 '</section>' 标签
+            // 向下查找直到找到 '</section>' 标签所在行
+            var currentLine = cursorPos.line;
+            while (currentLine < editor.lineCount()) {
+              lineContent = editor.getLine(currentLine);
+              closingTagIndex = lineContent.lastIndexOf('</section>');
+              if (closingTagIndex !== -1) {
+                break;
+              }
+              currentLine++;
+            }
+            // 如果还是没找到，则插入到当前行末尾
+            if (closingTagIndex === -1) {
+              closingTagIndex = lineContent.length;
+            }
+            // 设置插入位置
+            insertionPoint = {
+              line: currentLine,
+              ch: closingTagIndex
+            };
+          } else {
+            // 设置插入位置
+            insertionPoint = {
+              line: cursorPos.line,
+              ch: closingTagIndex
+            };
+          }
+
           editor.replaceRange(snippet, insertionPoint);
         }
       });
