@@ -30,21 +30,25 @@
     <h1>Reveal.js 簡報編輯器</h1>
     <form method="post">
         <div class="editor-container">
-            <textarea id="editor" name="content"></textarea>
+            <textarea id="editor" name="content"><section></section></textarea>
             <div class="snippets">
                 <h3>HTML 片段範例</h3>
                 <ul>
                     <li>
                         <input type="checkbox" id="snippet1">
-                        <label for="snippet1">新增投影片</label>
-                        <pre>&lt;section&gt;&lt;/section&gt;</pre>
+                        <label for="snippet1">加入標題</label>
+                        <pre>&lt;h2&gt;簡報標題&lt;/h2&gt;</pre>
                     </li>
                     <li>
                         <input type="checkbox" id="snippet2">
-                        <label for="snippet2">加入標題</label>
-                        <pre>&lt;h2&gt;簡報標題&lt;/h2&gt;</pre>
+                        <label for="snippet2">新增圖片</label>
+                        <pre>&lt;img src="圖片網址" alt="圖片說明"&gt;</pre>
                     </li>
-                    <!-- 其他片段範例 -->
+                    <li>
+                        <input type="checkbox" id="snippet3">
+                        <label for="snippet3">嵌入 YouTube 影片</label>
+                        <pre>&lt;iframe src="https://www.youtube.com/embed/影片ID" frameborder="0" allowfullscreen&gt;&lt;/iframe&gt;</pre>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -58,32 +62,32 @@
             lineNumbers: true
         });
 
-        var insertedSection = false;
-
         // 監聽複選框變化,並將選取的片段插入編輯器
         var checkboxes = document.querySelectorAll('.snippets input[type="checkbox"]');
         for (var i = 0; i < checkboxes.length; i++) {
             checkboxes[i].addEventListener('change', function() {
                 if (this.checked) {
                     var snippet = this.nextElementSibling.nextElementSibling.textContent;
-                    if (this.id === 'snippet1') {
-                        editor.replaceSelection('<section></section>');
-                        insertedSection = true;
-                    } else if (insertedSection) {
-                        var cursorPos = editor.getCursor();
-                        var lineContent = editor.getLine(cursorPos.line);
-                        var openingTagIndex = lineContent.indexOf('<section>') + 9;
-                        var closingTagIndex = lineContent.indexOf('</section>');
-                        var insertionPoint = {
-                            line: cursorPos.line,
-                            ch: openingTagIndex
-                        };
-                        editor.replaceRange(snippet, insertionPoint, {
-                            line: cursorPos.line,
-                            ch: closingTagIndex
-                        });
-                    } else {
-                        editor.replaceSelection(snippet);
+                    var cursorPos = editor.getCursor();
+                    var lineContent = editor.getLine(cursorPos.line);
+                    var openingTagIndex = lineContent.indexOf('<section>') + 9;
+                    var closingTagIndex = lineContent.indexOf('</section>');
+                    var insertionPoint = {
+                        line: cursorPos.line,
+                        ch: closingTagIndex
+                    };
+
+                    // 清空 <section> 與 </section> 之間的內容
+                    editor.replaceRange('', {
+                        line: cursorPos.line,
+                        ch: openingTagIndex
+                    }, insertionPoint);
+
+                    if (this.id === 'snippet1') { // 加入標題
+                        editor.replaceRange(snippet, insertionPoint);
+                    } else { // 其他片段
+                        editor.replaceRange(snippet, insertionPoint);
+                        insertionPoint.ch += snippet.length;
                     }
                 }
             });
